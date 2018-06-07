@@ -6,12 +6,23 @@
     android:id="@+id/rel_dwm">
 
 
-    <EditText
-        android:id="@+id/name"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/randomlongtext" />
+        android:layout_alignParentTop="true"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:id = "@+id/lunch_menu">
 
+        <TextView
+            android:background="@color/beige"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="a bcd efg hi jklmno pqrs tuv wxyza bcd efghi jklmnop" />
+
+    </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -21,14 +32,14 @@
 
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/lunch_button1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="A course" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/lunch_button2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
