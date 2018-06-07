@@ -100,10 +100,6 @@ public class Main2Activity extends AppCompatActivity {
 
 
 
-
-
-
-
     private void setLunchMenu(final LinearLayout layout){
         layout.removeAllViews();
 
