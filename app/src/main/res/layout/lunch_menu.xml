@@ -16,18 +16,12 @@
         android:paddingRight="10dp"
         android:id = "@+id/lunch_menu">
 
-        <TextView
-            android:background="@color/beige"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="a bcd efg hi jklmno pqrs tuv wxyza bcd efghi jklmnop" />
-
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/pink"
+        android:background="@color/coral"
         android:orientation="horizontal">
 
 

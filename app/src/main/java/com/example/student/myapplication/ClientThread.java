@@ -39,9 +39,13 @@ public class ClientThread extends Thread{
     Socket client;
 
     Handler uihandler;
-    PostMsgable activity;
+    volatile PostMsgable activity;
 
-    public ClientThread(Socket client, Handler handler,PostMsgable activity) {
+    public void setActivity(PostMsgable activity) {
+        this.activity = activity;
+    }
+
+    public ClientThread(Socket client, Handler handler, PostMsgable activity) {
 
         this.uihandler = handler;
         this.activity = activity;
@@ -75,7 +79,7 @@ public class ClientThread extends Thread{
         try {
 
 
-            Log.d("ClientThread","Sending data");
+            Log.d("ClientThread","Sending data : " + data);
             bufferW.write(data+"\n");
 
             bufferW.flush();
@@ -112,6 +116,7 @@ public class ClientThread extends Thread{
 
                 m.setData(bundle);
 
+                Log.d("received from server",msg);
                 uihandler.post(new RunnableMsg(activity,msg));
 
             }

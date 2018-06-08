@@ -80,7 +80,8 @@ public class SocketStuff {
     }
 
     private void setPostMsgable(PostMsgable postMsgable){
-        activity = postMsgable;
+        this.activity = postMsgable;
+        if(clientThread!=null)clientThread.setActivity(postMsgable);
     }
 
     public static final void prepareConnection(PostMsgable postMsgable){
@@ -97,15 +98,55 @@ public class SocketStuff {
         instance.send_internal(s);
     }
 
-    public static final String format_login(String id, String pw){
+    public static final String formatInt(String bday){
         StringBuilder sb = new StringBuilder();
-        sb.append("1,");
-        sb.append(id);
-        sb.append(",");
-        sb.append("2,");
-        sb.append(pw);
-
+        int bdayint = Integer.parseInt(bday);
+        sb.append("19");
+        sb.append(bdayint/10000);
+        sb.append("-");
+        sb.append(bdayint/100%100);
+        sb.append("-");
+        sb.append(String.format("%02d", bdayint%100));
         return sb.toString();
     }
+
+    public static final String format_login(String name, String bday){
+        StringBuilder sb = new StringBuilder();
+        sb.append("1/");
+        try {
+            sb.append(formatInt(bday));
+        }catch (NumberFormatException e){
+            Log.d("SocketStuff", "number format exception");
+        }
+        sb.append("/");
+        sb.append(name);
+        return sb.toString();
+    }
+
+    public static final String format_qr_(String code){
+        StringBuilder sb = new StringBuilder();
+        sb.append("3/");
+        sb.append("asdf1234s");
+        //sb.append(code);
+        sb.append("/");
+        sb.append(formatInt(instance.birth));
+        sb.append("/");
+        sb.append(instance.name);
+        return sb.toString();
+    }
+
+    String name;
+    String birth;
+    public static final void setSession(String name,String birth){
+        instance.name = name;
+        instance.birth = birth;
+    }
+    public static final String getSesssionName(){
+        return instance.name;
+    }
+    public static final String getSesssionBirth(){
+        return instance.birth;
+    }
+
 
 }

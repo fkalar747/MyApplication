@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword"
             android:ems="10"
-            android:hint="생년월일"
+            android:hint="생년월일 6자리"
             android:id="@+id/inputbirthday" />
 
 

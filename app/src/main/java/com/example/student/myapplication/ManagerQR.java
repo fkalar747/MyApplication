@@ -3,6 +3,7 @@ package com.example.student.myapplication;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -34,39 +35,64 @@ public class ManagerQR {
 
     final int RequestCameraPermissionID = 1001;
 
+    private int state;
+    public volatile boolean barcodeRead;
+
     public ManagerQR(RelativeLayout layout, AppCompatActivity activity){
         this.activity = activity;
         this.layout = layout;
-        Button button1 = layout.findViewById(R.id.lunch_button1);
+
+        Button button1 = layout.findViewById(R.id.qr_button1);
         button1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                Log.d("lunch button 1","onclick");
+                if(state ==1){
+
+                }else{
+                    Log.d("managerQR btn1", " do nothing ");
+                }
+
             }
         });
 
-        Button button2 = layout.findViewById(R.id.lunch_button2);
+        Button button2 = layout.findViewById(R.id.qr_button2);
         button2.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Code here executes on main thread after user presses button
-                Log.d("lunch button 2","onclick");
 
+                if(state ==2){
+
+                }else{
+                    Log.d("managerQR btn2", " do nothing ");
+                }
             }
         });
+
+
     }
 
 
 
+    public void setState(int i){
+        this.state = i;
+        switch (state){
+            case(0):
+                ((Button)layout.findViewById(R.id.qr_button1)).setTextColor(Color.BLACK);
+                ((Button)layout.findViewById(R.id.qr_button2)).setTextColor(Color.GRAY);
 
-    public void setLunchMenu(String[] strings){
-
-        for(int i = 0; i< 5 ; i++){
-
-            TextView tv = new TextView(activity);
-            tv.setText("hello lunch menu");
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(0,10,0,0);
-            layout.addView(tv,params);
+                ((Button)layout.findViewById(R.id.qr_button1)).setText("출근");
+                ((Button)layout.findViewById(R.id.qr_button2)).setText("퇴근");
+                break;
+            case(1):
+                ((Button)layout.findViewById(R.id.qr_button1)).setTextColor(Color.GRAY);
+                ((Button)layout.findViewById(R.id.qr_button1)).setText("출근됨");
+                ((Button)layout.findViewById(R.id.qr_button2)).setTextColor(Color.BLACK);
+                break;
+                case(2):
+                    ((Button)layout.findViewById(R.id.qr_button1)).setTextColor(Color.GRAY);
+                    ((Button)layout.findViewById(R.id.qr_button2)).setTextColor(Color.GRAY);
+                    ((Button)layout.findViewById(R.id.qr_button2)).setText("퇴근됨");
+                    break;
         }
     }
 
@@ -90,6 +116,7 @@ public class ManagerQR {
 
     private void prepareCameraView(){
 
+        barcodeRead = false;
         cameraPreview = (SurfaceView)layout.findViewById(R.id.cameraPreview);
 
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(activity).setBarcodeFormats(Barcode.QR_CODE).build();
@@ -97,7 +124,7 @@ public class ManagerQR {
 
         final TextView cameraResult = (TextView)layout.findViewById(R.id.cameraResult);
 
-        cameraPreview.setRotation(180);
+        //cameraPreview.setRotation(180);
 
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -125,6 +152,8 @@ public class ManagerQR {
         });
 
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+
+
             @Override
             public void release() {
 
@@ -132,16 +161,19 @@ public class ManagerQR {
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
-                final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
-                if(qrcodes.size() != 0){
-                    cameraResult.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            String s = qrcodes.valueAt(0).displayValue;
-                            cameraResult.setText(s);
-                            SocketStuff.send(s);
-                        }
-                    });
+                if(!barcodeRead) {
+                    final SparseArray<Barcode> qrcodes = detections.getDetectedItems();
+                    if (qrcodes.size() != 0) {
+                        cameraResult.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                String s = qrcodes.valueAt(0).displayValue;
+                                cameraResult.setText(s);
+                                SocketStuff.send(SocketStuff.format_qr_(s));
+                            }
+                        });
+                    }
+                    barcodeRead = true;
                 }
             }
         });
@@ -152,7 +184,23 @@ public class ManagerQR {
 
     public void selected(ViewGroup viewGroup){
         viewGroup.removeAllViews();
+        prepareCameraView();
         viewGroup.addView(this.layout);
+    }
+
+    public void setCheckArrive(){
+        Log.d("managerQR", "setCheckArrive: ");
+        layout.removeView(cameraPreview);
+        TextView tv = new TextView(activity);
+        tv.setText("waegtttttttttttttttttttttttttttttttttttttttttttttt");
+        layout.addView(tv);
+    }
+    public void setCheckLeave(){
+        Log.d("managerQR", "setCheckLeave: ");
+        layout.removeView(cameraPreview);
+        TextView tv = new TextView(activity);
+        tv.setText("waegtttttttttttttttttttttttttttttttttttttttttttttt");
+        layout.addView(tv);
     }
 
 }

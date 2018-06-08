@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements PostMsgable{
         loginbirthday = prefs.getString("inputbirthday",null);
 
 
-        if(loginname !=null && loginbirthday != null) {
+        if(loginname !=null && loginbirthday != null&&!loginname.equals("")&&!loginbirthday.equals("")) {
             Log.d("MainActivity"," shared ref vals are not null");
             SocketStuff.send(SocketStuff.format_login(loginname,loginbirthday));
         }else{
@@ -47,32 +47,35 @@ public class MainActivity extends AppCompatActivity implements PostMsgable{
             @Override
             public void onClick(View view) {
                 Log.d("MainActivity","button clicked");
-                SocketStuff.send(SocketStuff.format_login(name.getText().toString(),birthday.getText().toString()));
+                loginname = name.getText().toString();
+                loginbirthday = birthday.getText().toString();
+                SocketStuff.send(SocketStuff.format_login(loginname,loginbirthday));
             }
         });
 
+        goToMain2();
+
+    }
+
+    public void goToMain2(){
+        Toast.makeText(MainActivity.this, name.getText().toString()+"님 환영합니다.", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(MainActivity.this, Main2Activity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public void postMsg(String msg) {
-
-        Log.d("received from server",msg);
-
-        if(true){
-            SharedPreferences prefs = getSharedPreferences("PrefName", AppCompatActivity.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("inputname", name.getText().toString());
-            editor.putString("inputbirthday", birthday.getText().toString());
-            editor.commit();
-        }
-
-        if(true){
-            Toast.makeText(MainActivity.this, name.getText().toString()+"님 환영합니다.", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(MainActivity.this, Main2Activity.class);
-            startActivity(intent);
-            finish();
-        }else {
-
+        switch (msg.charAt(0)){
+            case ('1'):
+                SharedPreferences prefs = getSharedPreferences("PrefName", AppCompatActivity.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("inputname", loginname);
+                editor.putString("inputbirthday", loginbirthday);
+                SocketStuff.setSession(loginname,loginbirthday);
+                editor.commit();
+                goToMain2();
+                break;
         }
     }
 

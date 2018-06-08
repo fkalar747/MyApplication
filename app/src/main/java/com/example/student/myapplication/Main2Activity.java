@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -126,20 +127,37 @@ public class Main2Activity extends AppCompatActivity implements PostMsgable {
                 finish();
             }
         });
+
+        Button anyButton = new Button(this);
+        anyButton.setText("anyButton");
+        ((ViewGroup)rel_logout).addView(anyButton);
+
+        anyButton.setOnClickListener(new View.OnClickListener() {
+            int a = 1;
+            @Override
+            public void onClick(View view) {
+                managerQR.setState(a);
+                a =( a + 1 )%3;
+            }
+        });
     }
 
     @Override
     public void postMsg(String msg){
+        Log.d("From Server", "received from server : "+msg);
         switch (msg.charAt(0)){
             case('1'):
                 break;
             case('2'):
                 String[] strings = msg.split("/");
+                Log.d("got menu", "postMsg: gotmenu");
                 managerLunch.setLunchMenu(strings);
                 break;
             case('3'):
+                managerQR.setCheckArrive();
                 break;
             case('4'):
+                managerQR.setCheckLeave();
                 break;
             default:
                 break;
