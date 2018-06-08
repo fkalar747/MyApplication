@@ -18,6 +18,7 @@ import android.os.Bundle;
 
 import android.os.Handler;
 
+import android.os.Looper;
 import android.os.Message;
 
 import android.util.Log;
@@ -37,13 +38,13 @@ public class ClientThread extends Thread{
 
     Socket client;
 
-    Handler handler;
+    Handler uihandler;
+    PostMsgable activity;
 
+    public ClientThread(Socket client, Handler handler,PostMsgable activity) {
 
-
-    public ClientThread(Socket client, Handler handler) {
-
-        this.handler = handler;
+        this.uihandler = handler;
+        this.activity = activity;
 
         try {
 
@@ -69,14 +70,12 @@ public class ClientThread extends Thread{
 
     public void send(String data){
 
-        Log.d("client send()","전송");
+
 
         try {
 
 
-
-            System.out.println("data:"+data);
-
+            Log.d("ClientThread","Sending data");
             bufferW.write(data+"\n");
 
             bufferW.flush();
@@ -85,6 +84,8 @@ public class ClientThread extends Thread{
 
             // TODO Auto-generated catch block
 
+
+            Log.d("ClientThread","exception point 7395");
             e.printStackTrace();
 
         }
@@ -111,7 +112,7 @@ public class ClientThread extends Thread{
 
                 m.setData(bundle);
 
-                handler.sendMessage(m);
+                uihandler.post(new RunnableMsg(activity,msg));
 
             }
 
@@ -121,6 +122,7 @@ public class ClientThread extends Thread{
 
             // TODO Auto-generated catch block
 
+            Log.d("ClientThread_", "listen_exception point 19401");
             e.printStackTrace();
 
         }
@@ -145,7 +147,18 @@ public class ClientThread extends Thread{
 
     }
 
-
+    class RunnableMsg implements Runnable{
+        PostMsgable activity;
+        String msg;
+        RunnableMsg(PostMsgable activity,String msg){
+            this.activity = activity;
+            this.msg = msg;
+        }
+        @Override
+        public void run() {
+            activity.postMsg(msg);
+        }
+    }
 
 }
 
